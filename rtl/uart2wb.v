@@ -11,16 +11,18 @@
 
 module uart2wb #(
 	parameter integer WB_N = 3,
+	parameter integer DIV_WIDTH = 8,
 
 	// auto
 	parameter integer DL = (32*WB_N)-1,
-	parameter integer CL = WB_N-1
+	parameter integer CL = WB_N-1,
+	parameter integer DW = DIV_WIDTH - 1
 )(
 	// UART
 	input  wire        uart_rx,
 	output wire        uart_tx,
 
-	input  wire [ 7:0] uart_div,
+	input  wire [DW:0] uart_div,
 
 	// Wishbone
 	output reg  [31:0] wb_wdata,
@@ -54,7 +56,7 @@ module uart2wb #(
 	// -----------
 
 	uart_rx #(
-		.DIV_WIDTH(8),
+		.DIV_WIDTH(DIV_WIDTH),
 		.GLITCH_FILTER(0)
 	) rx_I (
 		.rx   (uart_rx),
@@ -66,7 +68,7 @@ module uart2wb #(
 	);
 
 	uart_tx #(
-		.DIV_WIDTH(8)
+		.DIV_WIDTH(DIV_WIDTH)
 	) tx_I (
 		.tx    (uart_tx),
 		.data  (tx_data),
